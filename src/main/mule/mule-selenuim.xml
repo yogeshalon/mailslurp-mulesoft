@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6a1543e3-50e8-48f3-bbd2-01b792efde43" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="mule-invoke-browser" doc:id="5353eaf9-b5c9-4bcc-9e0d-85dd24705c02" >
+		<http:listener doc:name="Listener" doc:id="1606796e-3a83-46b5-b6a3-75355ae50455" config-ref="HTTP_Listener_config" path="/invokeVerify" />
+		<java:invoke-static method="openAndVerify()" doc:name="Open brower" doc:id="f6590fec-22b5-4a41-9d97-d52bd78553bc" class="com.mule.selenium.SeleniumService" />
+		<ee:transform doc:name="Response" doc:id="a541f5bf-2ec1-4dce-b263-42b5a5b00640" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Logger" doc:id="883c86db-7c13-4fe5-ba0d-92412b7eb213" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" />
+	</flow>
+</mule>
